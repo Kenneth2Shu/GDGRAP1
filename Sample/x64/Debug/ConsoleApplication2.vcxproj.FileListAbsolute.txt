@@ -1,0 +1,6 @@
+C:\Users\Student\Documents\Visual Studio 2022\ConsoleApplication2\x64\Debug\ConsoleApplication2.exe
+C:\Users\Admin\Documents\ConsoleApplication2\x64\Debug\ConsoleApplication2.exe
+C:\Users\Admin\Documents\GitHub\GRAPX1\ConsoleApplication2\x64\Debug\ConsoleApplication2.exe
+C:\Users\Admin\Documents\GitHub\GRAPX1\Assignment01\x64\Debug\ConsoleApplication2.exe
+C:\Users\Admin\Documents\GitHub\GDGRAP1\Assignment01\x64\Debug\ConsoleApplication2.exe
+C:\Users\Admin\Documents\GitHub\GDGRAP1\Sample\x64\Debug\ConsoleApplication2.exe
