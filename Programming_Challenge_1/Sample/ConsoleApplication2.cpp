@@ -1,11 +1,10 @@
 #define _USE_MATH_DEFINES
 
 #include <glad/glad.h>
-//above glfw
+
 #include <GLFW/glfw3.h>
 #include <cmath>
 
-//glm headers
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -45,37 +44,26 @@ float projection_z = 100.0f;
 
 void Key_Callback(
     GLFWwindow* window,
-    int key, //key code
-    int scancode, //physical position
-    int action, //press or release
-    int mod //modifier keys (ctrl, shft, alt, etc)
+    int key,
+    int scancode,
+    int action,
+    int mod
 )
 
 {
-    //original
-    /*
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        //y_mod += 0.1f;
-        translate_y += 0.1f;
-    }
-    */
     if (key == GLFW_KEY_D && action == GLFW_REPEAT) {
-        //x_mod += 0.1f;
         translate_x += 0.01f;
     }
 
     if (key == GLFW_KEY_A && action == GLFW_REPEAT) {
-        //x_mod -= 0.1f;
         translate_x -= 0.01f;
     }
 
     if (key == GLFW_KEY_W && action == GLFW_REPEAT) {
-        //y_mod += 0.1f;
         translate_y += 0.01f;
     }
 
     if (key == GLFW_KEY_S && action == GLFW_REPEAT) {
-        //y_mod -= 0.1f;
         translate_y -= 0.01f;
     }
 
@@ -92,32 +80,28 @@ void Key_Callback(
     }
 
     if (key == GLFW_KEY_Z && action == GLFW_REPEAT) {
-        //translate_z += 0.1f;
         camera_z += 0.1f;
         std::cout << camera_z << "\n";
     }
 
     if (key == GLFW_KEY_X && action == GLFW_REPEAT) {
-        //translate_z -= 0.1f;
         camera_z -= 0.1f;
         std::cout << camera_z << "\n";
     }
 
     if (key == GLFW_KEY_T && action == GLFW_REPEAT) {
-        //translate_z += 0.1f;
         camera_y += 0.1f;
         std::cout << camera_y << "\n";
     }
 
     if (key == GLFW_KEY_G && action == GLFW_REPEAT) {
-        //translate_z -= 0.1f;
         camera_y -= 0.1f;
         std::cout << camera_y << "\n";
     }
 
     if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
         axis_x += 50.0f;
-        theta += 1;
+        theta -= 1;
     }
 
     if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
@@ -134,44 +118,42 @@ void Key_Callback(
         axis_x -= 50.0f;
         theta += 1;
     }
+
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        //spawn
+    }
 }
 
 int main(void)
 {
     GLFWwindow* window;
 
-    /* Initialize the library */
     if (!glfwInit())
         return -1;
 
     float Pi = 3.1415;
 
-    //3x3 identity matrix
     glm::mat3 identity_matrix3 = glm::mat3(1.0f);
-    //4x4 identity matrix
     glm::mat4 identity_matrix4 = glm::mat4(1.0f);
 
-    //3d translation matrix
     glm::mat4 translation =
-        glm::translate(identity_matrix4, //identity matrix
+        glm::translate(identity_matrix4,
             glm::vec3(translate_x,
                       translate_y,
                       translate_z)
         );
 
-    //3d scale matrix
     glm::mat4 scale =
-        glm::scale(identity_matrix4, //identity matrix
+        glm::scale(identity_matrix4,
             glm::vec3(scale_x,
                       scale_y,
                       scale_z)
         );
 
-    //3d rotation matrix
     glm::mat4 rotation =
-        glm::rotate(identity_matrix4, //identity matrix
-            glm::radians(theta), //angle of rotation
-            glm::vec3(axis_x,//normalized axis vector
+        glm::rotate(identity_matrix4,
+            glm::radians(theta),
+            glm::vec3(axis_x,
                       axis_y,
                       axis_z)
         );
@@ -197,14 +179,6 @@ int main(void)
     stbi_set_flip_vertically_on_load(true);
 
     //for the texture
-    
-    /*
-    unsigned char* tex_bytes = stbi_load("3D/ayaya.png",
-                                        &img_width,
-                                        &img_height,
-                                        &colorChannels,
-                                        0);*/
-
     unsigned char* tex_bytes = stbi_load("3D/dino.png",
                                         &img_width,
                                         &img_height,
@@ -338,19 +312,6 @@ int main(void)
         0.f, 0.f
     };//handles how many tiles, ex. 3 gives 3 tiles
 
-    /*
-    GLfloat UV[]{
-        0.f, 1.f,
-        0.f, 0.f,
-        1.f, 1.f,
-        1.f, 0.f,
-        1.f, 1.f,
-        1.f, 0.f,
-        0.f, 1.f,
-        0.f, 0.f
-    };
-    */
-
     std::vector<GLuint> mesh_indices;
     for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
         mesh_indices.push_back(
@@ -445,7 +406,7 @@ int main(void)
         //camera position
         //glm::vec3 cameraPos = glm::vec3(0, 0, 1.0f);
         // moves with camera
-        glm::vec3 cameraPos = glm::vec3(translate_x, 0, 1.0f);
+        glm::vec3 cameraPos = glm::vec3(0, 0, 1.0f);
         //psoition matrix is translation
         glm::mat4 cameraPosMatrix = glm::translate(
             glm::mat4(1.0f),//initialize identity matrix
