@@ -5,6 +5,11 @@
 #include <GLFW/glfw3.h>
 #include <cmath>
 
+//glm headers
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #define TINYOBJLOADER_IMPLEMENTATION
 
 #include "tiny_obj_loader.h"
@@ -14,6 +19,17 @@
 
 float x_mod = 0;
 float y_mod = 0;
+
+float translate_x = 0;
+float translate_y = 0;
+float translate_z = 0;
+float scale_x = 1;
+float scale_y = 1;
+float scale_z = 1;
+float theta = 1;
+float axis_x = 1;
+float axis_y = 1;
+float axis_z = 1;
 
 void Key_Callback(
     GLFWwindow* window,
@@ -25,19 +41,45 @@ void Key_Callback(
 
 {
     if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-        x_mod += 0.1f;
+        //x_mod += 0.1f;
+        translate_x += 0.1f;
     }
 
     if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-        x_mod -= 0.1f;
+        //x_mod -= 0.1f;
+        translate_x -= 0.1f;
     }
 
     if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        y_mod += 0.1f;
+        //y_mod += 0.1f;
+        translate_y += 0.1f;
     }
 
     if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        y_mod -= 0.1f;
+        //y_mod -= 0.1f;
+        translate_y -= 0.1f;
+    }
+
+    if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+        axis_y -= 10.0f;
+        axis_z -= 10.0f;
+    }
+
+    if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+        axis_y += 10.0f;
+        axis_z += 10.0f;
+    }
+
+    if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+        scale_x += 0.2f;
+        scale_y += 0.2f;
+        scale_z += 0.2f;
+    }
+
+    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+        scale_x -= 0.2f;
+        scale_y -= 0.2f;
+        scale_z -= 0.2f;
     }
 }
 
@@ -50,6 +92,36 @@ int main(void)
         return -1;
 
     float Pi = 3.1415;
+
+    //3x3 identity matrix
+    glm::mat3 identity_matrix3 = glm::mat3(1.0f);
+    //4x4 identity matrix
+    glm::mat4 identity_matrix4 = glm::mat4(1.0f);
+
+    //3d translation matrix
+    glm::mat4 translation =
+        glm::translate(identity_matrix4, //identity matrix
+            glm::vec3(translate_x,
+                      translate_y,
+                      translate_z)
+        );
+
+    //3d scale matrix
+    glm::mat4 scale =
+        glm::scale(identity_matrix4, //identity matrix
+            glm::vec3(scale_x,
+                      scale_y,
+                      scale_z)
+        );
+
+    //3d rotation matrix
+    glm::mat4 rotation =
+        glm::rotate(identity_matrix4, //identity matrix
+            glm::radians(theta), //angle of rotation
+            glm::vec3(axis_x,//normalized axis vector
+                      axis_y,
+                      axis_z)
+        );
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 640, "Kevin Shu Too", NULL, NULL);
@@ -183,11 +255,39 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        unsigned int xLoc = glGetUniformLocation(shaderProgram, "x");//note: same name as variable in vert shader
-        glUniform1f(xLoc, x_mod);
+        //from week 2
+        //unsigned int xLoc = glGetUniformLocation(shaderProgram, "x");//note: same name as variable in vert shader
+        //glUniform1f(xLoc, x_mod);
 
-        unsigned int yLoc = glGetUniformLocation(shaderProgram, "y");
-        glUniform1f(yLoc, y_mod);
+        //unsigned int yLoc = glGetUniformLocation(shaderProgram, "y");
+        //glUniform1f(yLoc, y_mod);
+
+        //for week 3
+        //from identity, then translate, then scale, the rotate
+
+        glm::mat4 transformation_matrix = glm::translate(
+            identity_matrix4,
+            glm::vec3(translate_x, translate_y, translate_z)
+        );
+
+        transformation_matrix = glm::scale(
+            transformation_matrix,
+            glm::vec3(scale_x, scale_y, scale_z)// do not set any to 0
+        );
+
+        transformation_matrix = glm::rotate(
+            transformation_matrix,
+            glm::radians(theta),
+            glm::normalize(glm::vec3(axis_x, axis_y, axis_z))//needs at least 1 value greater than 0
+        );
+
+        //get location
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+        //assign matrix to vertex shader
+        glUniformMatrix4fv(transformLoc,//address
+            1,
+            GL_FALSE,
+            glm::value_ptr(transformation_matrix));
 
         //declare which shader the program will use
         glUseProgram(shaderProgram);
